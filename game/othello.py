@@ -39,7 +39,7 @@ class Othello:
 
 	@staticmethod
 	def setInitialParameters():
-		Othello.board = [[Player.EMPTY for _ in range(8)] for _ in range(8)]
+		Othello.board = np.zeros(shape=(8, 8), dtype=np.int8)
 		
 		Othello.board[3][4] = Player.BLACK
 		Othello.board[4][3] = Player.BLACK

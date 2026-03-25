@@ -1,5 +1,5 @@
 from game.utils import Player, Directions, PossiblePlays
-from tree import Knot
+from agent.tree import Knot
 import numpy as np
 import time
 
