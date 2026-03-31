@@ -27,14 +27,24 @@ class Evaluation():
   }
 
   @staticmethod
-  def hPositional(board: list[list[Player]], player: Player) -> float:
+  def abs(a):
+    return a if a >= 0 else -a
+
+  @staticmethod
+  def normalize(a, b):
+    return (a - b) / (Evaluation.abs(a) + Evaluation.abs(b) + 1)
+
+  @staticmethod
+  def hPositional(board: list[list[Player]], player: Player, totalPieces: int) -> float:
     positionalScore = 0
     for i in range(8):
       for j in range(8):
         if (board[i][j] == player):
-          positionalScore += Evaluation.__scoreBoard[i][j].value
+          positionalScore += int(Evaluation.__scoreBoard[i][j].value)
+          if (totalPieces < 20 and Evaluation.__scoreBoard[i][j] == h.MIDDLE):
+            positionalScore += int(Evaluation.__scoreBoard[i][j].value) * 9
 
-    return positionalScore / 0.88
+    return positionalScore
 
   @staticmethod
   def __initializeVisited():
@@ -79,7 +89,7 @@ class Evaluation():
     stabilityScore += Evaluation.__expansion((7, 7), d.SE, board, player)
     stabilityScore += Evaluation.__expansion((7, 0), d.SW, board, player)
 
-    return stabilityScore / 0.64
+    return stabilityScore
 
   @staticmethod
   def hCorner(board: list[list[Player]], player: Player) -> float:
@@ -89,7 +99,7 @@ class Evaluation():
     if (board[7][7] == player): corners += 1
     if (board[7][0] == player): corners += 1
 
-    return corners * 25
+    return corners
 
   @staticmethod
   def hLoud(board: list[list[Player]], player: Player) -> float:
@@ -108,8 +118,9 @@ class Evaluation():
               if ((board[n][m] == Player.EMPTY and board[p][q] != Player.EMPTY) or
                   (board[n][m] != Player.EMPTY and board[p][q] == Player.EMPTY)):
                 frontierPieces += 1
+                break
 
-    return frontierPieces / 0.36
+    return frontierPieces
 
   @staticmethod
   def hPieces(board: list[list[Player]], player: Player) -> float:
@@ -119,4 +130,4 @@ class Evaluation():
         if (board[i][j] == player):
           playerPieces += 1
 
-    return playerPieces / 0.64
+    return playerPieces

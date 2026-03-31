@@ -7,13 +7,13 @@ class Player(IntEnum):
 	WHITE = np.int8(2)
 
 class BoardHouses(Enum):
-	CORNER = np.int8(10)
-	X = np.int8(-5)
-	C = np.int8(-3)
-	A = np.int8(-2)
+	CORNER = np.int8(50)
+	X = np.int8(-25)
+	C = np.int8(-15)
+	A = np.int8(-5)
 	B = np.int8(-1)
 	SIMPLE = np.int8(1)
-	MIDDLE = np.int8(2)
+	MIDDLE = np.int8(10)
 
 class Direction(Enum):
 	N = (-1, 0)

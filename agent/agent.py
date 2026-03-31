@@ -4,10 +4,12 @@ from agent.tree import Knot
 import time
 
 class Agent:
-	def __init__(self, player: Player, opponent: Player, initialBoard: list[list[Player]]):
+	def __init__(self, player: Player, opponent: Player, initialBoard: list[list[Player]], timeLimit: float = 0.95, depthLimit: int = 100):
 		self.player = player
 		self.opponent = opponent
 		self.initialBoard = initialBoard
+		self.timeLimit = timeLimit
+		self.depthLimit = depthLimit
 
 	def choosePlay(self):
 		root = self.buildDecisionTree(self.initialBoard)
@@ -22,16 +24,22 @@ class Agent:
 		
 		root = Knot(board, 0, None, 0)
 		queue = [root]
-		while len(queue) > 0 and time.time() - start < 0.95: 
+		while len(queue) > 0 and time.time() - start < self.timeLimit: 
 			knot = queue.pop(0)
 			isMaximizing = knot.depth % 2 == 0
+			player = self.player if isMaximizing else self.opponent
 			
-			possiblePlays = Agent.possiblePlays(knot.board, self.player,  self.opponent)
+			possiblePlays = Agent.possiblePlays(knot.board, player)
 			if not possiblePlays.hasPossiblePlays:
+				if knot.pos == None:
+					continue
+				passKnot = Knot(knot.board, self.evaluateBoard(knot.board), None, knot.depth + 1)
+				knot.children.append(passKnot)
+				if (passKnot.depth < self.depthLimit):
+					queue.append(passKnot)
 				continue
 			
 			for pos, directions in possiblePlays.playsList.items():
-				player = self.player if isMaximizing else self.opponent
 				
 				newBoard = self.applyMove(knot.board, pos, directions, player) 
 				newBoardScore = self.evaluateBoard(newBoard)
@@ -40,7 +48,8 @@ class Agent:
 				knot.children.append(newKnot)
 
 			knot.children = self.orderMoves(knot.children, isMaximizing)
-			queue.extend(knot.children)
+			if (knot.depth + 1 < self.depthLimit):
+				queue.extend(knot.children)
 
 		return root
 	
@@ -76,7 +85,7 @@ class Agent:
 		
 		return knot.score
 
-	def orderMoves(self, knotChildren: list[Knot], isMaximizing: bool) -> list[tuple[int, int]]:
+	def orderMoves(self, knotChildren: list[Knot], isMaximizing: bool) -> list[Knot]:
 		return sorted(knotChildren, key=lambda knot: knot.score, reverse=isMaximizing)
 	
 	def applyMove(self, board: list[list[Player]], pos: tuple[int, int], directions: set[Directions], player: Player) -> list[list[Player]]:
@@ -90,52 +99,53 @@ class Agent:
 				cur = Directions.nextPosition(cur, direction)
 		return newBoard
 	
-	def evaluateBoard(self, board: list[list[Player]]) -> int:
+	def evaluateBoard(self, board: list[list[Player]]) -> float:
 		totalPieces = 0
 		for i in range(8):
 			for j in range(8):
 				if (board[i][j] != Player.EMPTY): totalPieces += 1
 		
-		positional = Evaluation.hPositional(board, self.player) - Evaluation.hPositional(board, self.opponent)
-		stability = Evaluation.hStability(board, self.player) - Evaluation.hStability(board, self.opponent)
-		frontier = Evaluation.hLoud(board, self.opponent) - Evaluation.hLoud(board, self.player)
-		corner = Evaluation.hCorner(board, self.player) - Evaluation.hCorner(board, self.opponent)
-		pieces = Evaluation.hPieces(board, self.player) - Evaluation.hPieces(board, self.opponent)
-		mobility = len(Agent.possiblePlays(board, self.player, self.opponent).playsList.keys()) - len(Agent.possiblePlays(board, self.player, self.opponent).playsList.keys())
+		positional = Evaluation.normalize(Evaluation.hPositional(board, self.player, totalPieces), Evaluation.hPositional(board, self.opponent, totalPieces))
+		stability = Evaluation.normalize(Evaluation.hStability(board, self.player), Evaluation.hStability(board, self.opponent))
+		frontier = Evaluation.normalize(Evaluation.hLoud(board, self.opponent), Evaluation.hLoud(board, self.player))
+		corner = Evaluation.normalize(Evaluation.hCorner(board, self.player), Evaluation.hCorner(board, self.opponent))
+		pieces = Evaluation.normalize(Evaluation.hPieces(board, self.player), Evaluation.hPieces(board, self.opponent))
+		mobility = Evaluation.normalize(len(Agent.possiblePlays(board, self.player).playsList.keys()), len(Agent.possiblePlays(board, self.opponent).playsList.keys()))
 		
 		if (totalPieces < 20):
 			return (
 				(
-					4 * positional +
+					7 * positional +
 					1 * stability +
 					2 * frontier +
-					3 * corner +
-					4 * mobility
-				) / 14
+					6 * mobility 
+				) / 16
 			)
-		elif (totalPieces < 52):
+		elif (totalPieces < 54):
 			return (
 				(
 					2 * positional +
-					5 * stability +
-					2 * frontier +
-					6 * corner +
-					2 * pieces +
-					4 * mobility
-				) / 21
+					3 * stability +
+					1 * frontier +
+					20 * corner +
+					1 * pieces +
+					4 * mobility 
+				) / 31
 			)
 		else:
 			return (
 				(
-					2 * stability +
+					4 * stability +
 					1 * frontier +
-					8 * pieces +
-					2 * mobility
-				) / 13
+					9 * corner +
+					14 * pieces +
+					2 * mobility 
+				) / 30
 			)
 
 	@staticmethod
-	def possiblePlays(board: list[list[Player]], player: Player, opponent: Player) -> PossiblePlays:
+	def possiblePlays(board: list[list[Player]], player: Player) -> PossiblePlays:
+		opponent = Player.BLACK if player == Player.WHITE else Player.WHITE
 		plays = PossiblePlays()
 
 		for i in range(len(board)):
