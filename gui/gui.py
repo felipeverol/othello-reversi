@@ -26,9 +26,9 @@ class OthelloGUI:
         tk.Radiobutton(controls, text="Pessoa x Pessoa", variable=self.mode, value=1).pack(side='left')
         tk.Radiobutton(controls, text="Pessoa x Agente", variable=self.mode, value=2).pack(side='left')
         tk.Radiobutton(controls, text="Agente x Agente", variable=self.mode, value=3).pack(side='left')
-        tk.Radiobutton(controls, text="Agente (Minimax) x Agente (Alphabeta)", variable=self.mode, value=4).pack(side='left')
-        tk.Radiobutton(controls, text="Agente (Simples) x Agente", variable=self.mode, value=5).pack(side='left')
-        tk.Radiobutton(controls, text="Agente (Baseline) x Agente", variable=self.mode, value=3).pack(side='left')
+        tk.Radiobutton(controls, text="Minimax x Alphabeta", variable=self.mode, value=4).pack(side='left')
+        tk.Radiobutton(controls, text="Estático x Dinâmico", variable=self.mode, value=5).pack(side='left')
+        tk.Radiobutton(controls, text="Baseline x Complexo", variable=self.mode, value=3).pack(side='left')
 
         tk.Button(controls, text="Novo Jogo", command=self.start_new_game).pack(side='left', padx=8)
 
@@ -185,21 +185,21 @@ class OthelloGUI:
             if (self.white_is_computer and Othello.turn == Player.WHITE):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
-        elif mode == 4: # Agente (Minimax) x Agente (Alpha-Beta)
+        elif mode == 4: # Minimax x Alpha-Beta
             if (self.black_is_computer and Othello.turn == Player.BLACK):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, minimaxAgent=True)
 
             if (self.white_is_computer and Othello.turn == Player.WHITE):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
-        elif mode == 5: # Simples x Agente
+        elif mode == 5: # Estático x Dinâmico
             if (self.black_is_computer and Othello.turn == Player.BLACK):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, simpleAgent=True)
         
             if (self.white_is_computer and Othello.turn == Player.WHITE):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
-        elif mode == 6: # Baseline x Agente
+        elif mode == 6: # Baseline x Complexo
             if (self.black_is_computer and Othello.turn == Player.BLACK):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, baselineAgent=True)
         
@@ -284,7 +284,7 @@ class OthelloGUI:
         self.update_board()
 
         if Othello.winner != Player.EMPTY:
-            print(f'{Othello.winner.name} wins!')
+            print(f"{Othello.winner.name} wins! {Othello.score[Othello.winner.name]}:{Othello.score[Othello.loser.name]}")
             messagebox.showinfo(
                 "Game Over",
                 f"{Othello.winner.name} wins! "
