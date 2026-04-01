@@ -168,12 +168,40 @@ class OthelloGUI:
         if not plays.hasPossiblePlays:
             self.root.after(0, self.handle_ai_pass)
             return
+        
+        mode = self.mode.get()
 
-        if (self.white_is_computer and Othello.turn == Player.WHITE):
-            agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
+        if mode == 2: # Pessoa x Agente
+            if (self.white_is_computer and Othello.turn == Player.WHITE):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
-        if (self.black_is_computer and Othello.turn == Player.BLACK):
-            agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.95, simpleAgent=True)
+        elif mode == 3: # Agente x Agente
+            if (self.black_is_computer and Othello.turn == Player.BLACK):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
+
+            if (self.white_is_computer and Othello.turn == Player.WHITE):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
+
+        elif mode == 4: # Agente (Minimax) x Agente (Alpha-Beta)
+            if (self.black_is_computer and Othello.turn == Player.BLACK):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, minimaxAgent=True)
+
+            if (self.white_is_computer and Othello.turn == Player.WHITE):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
+
+        elif mode == 5: # Simples x Agente
+            if (self.black_is_computer and Othello.turn == Player.BLACK):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, simpleAgent=True)
+        
+            if (self.white_is_computer and Othello.turn == Player.WHITE):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
+
+        elif mode == 6: # Baseline x Agente
+            if (self.black_is_computer and Othello.turn == Player.BLACK):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, baselineAgent=True)
+        
+            if (self.white_is_computer and Othello.turn == Player.WHITE):
+                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
         try:
             chosen = agent.choosePlay()

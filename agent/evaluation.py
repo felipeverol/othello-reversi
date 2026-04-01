@@ -102,23 +102,31 @@ class Evaluation():
     return corners
 
   @staticmethod
+  def __neighbor(board: list[list[Player]], player: Player, i: int, j: int) -> bool:
+    opponent = Player.BLACK if player == Player.WHITE else Player.WHITE
+    rows = [i-1, i, i+1]
+    cols = [j-1, j, j+1]
+
+    for r in rows:
+      for c in cols:
+        if (r == i and c == j):
+          continue
+
+        if (r >= 0 and r < 8 and c >= 0 and c < 8):
+          if (board[r][c] == opponent): return True
+    
+    return False
+
+
+  @staticmethod
   def hLoud(board: list[list[Player]], player: Player) -> float:
     frontierPieces = 0
     for i in range(8):
       for j in range(8):
         if (board[i][j] == player):
-          originalDir = [d.N, d.E, d.S, d.W]
-          dir1 = Directions.nextPositions((i, j), originalDir)
-          dir2 = Directions.nextPositions((i, j), Directions.oppositeDirections(originalDir))
-          for k in range(4):
-            (n, m) = dir1[k]
-            (p, q) = dir2[k]
-            if (n >= 0 and m >= 0 and n < 8 and m < 8 and
-                p >= 0 and q >= 0 and p < 8 and q < 8):
-              if ((board[n][m] == Player.EMPTY and board[p][q] != Player.EMPTY) or
-                  (board[n][m] != Player.EMPTY and board[p][q] == Player.EMPTY)):
-                frontierPieces += 1
-                break
+          if (Evaluation.__neighbor(board, player, i, j)):
+            frontierPieces += 1
+            break
 
     return frontierPieces
 
