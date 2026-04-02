@@ -43,9 +43,14 @@ O Othello é disputado em um tabuleiro 8×8 por dois jogadores (preto e branco):
 ## Como executar
 
 ### Executável (Linux)
-Basta dar permissão e executar:
 ```bash
+# Clonar o repositório
+
+# Entrar no repositório do projeto
+# Dar permissão
 chmod +x Othello
+
+# Iniciar o jogo
 ./Othello
 ```
 
