@@ -69,7 +69,10 @@ Com isso aparecerá a tela com o jogo, e um menu com todas as opções implement
 ```
 othello-reversi/
 ├── main.py              # Ponto de entrada: chama gui.run()
-├── gui.py               # Interface gráfica em tkinter — 6 modos de jogo
+├── .gitignore
+├── README.md
+├── gui/
+    ├── gui.py                 # Interface gráfica em tkinter — 6 modos de jogo
 ├── game/
 │   ├── othello.py       # Lógica do jogo — classe estática Othello
 │   └── utils.py         # Enums: Player, Direction, BoardHouses, Directions, PossiblePlays
