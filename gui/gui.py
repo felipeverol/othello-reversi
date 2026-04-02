@@ -26,9 +26,6 @@ class OthelloGUI:
         tk.Radiobutton(controls, text="Pessoa x Pessoa", variable=self.mode, value=1).pack(side='left')
         tk.Radiobutton(controls, text="Pessoa x Agente", variable=self.mode, value=2).pack(side='left')
         tk.Radiobutton(controls, text="Agente x Agente", variable=self.mode, value=3).pack(side='left')
-        tk.Radiobutton(controls, text="Minimax x Alphabeta", variable=self.mode, value=4).pack(side='left')
-        tk.Radiobutton(controls, text="Estático x Dinâmico", variable=self.mode, value=5).pack(side='left')
-        tk.Radiobutton(controls, text="Baseline x Complexo", variable=self.mode, value=6).pack(side='left')
 
         tk.Button(controls, text="Novo Jogo", command=self.start_new_game).pack(side='left', padx=8)
 
@@ -182,27 +179,6 @@ class OthelloGUI:
             if (self.black_is_computer and Othello.turn == Player.BLACK):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
-            if (self.white_is_computer and Othello.turn == Player.WHITE):
-                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
-
-        elif mode == 4: # Minimax x Alpha-Beta
-            if (self.black_is_computer and Othello.turn == Player.BLACK):
-                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, minimaxAgent=True)
-
-            if (self.white_is_computer and Othello.turn == Player.WHITE):
-                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
-
-        elif mode == 5: # Estático x Dinâmico
-            if (self.black_is_computer and Othello.turn == Player.BLACK):
-                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, simpleAgent=True)
-        
-            if (self.white_is_computer and Othello.turn == Player.WHITE):
-                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
-
-        elif mode == 6: # Baseline x Complexo
-            if (self.black_is_computer and Othello.turn == Player.BLACK):
-                agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4, baselineAgent=True)
-        
             if (self.white_is_computer and Othello.turn == Player.WHITE):
                 agent = Agent(Othello.turn, Othello.opponent, Othello.board, timeLimit=0.75, depthLimit=4)
 
